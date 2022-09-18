@@ -1,5 +1,12 @@
 import time
-from crypto_hash import crypto_hash
+from crypto.crypto_hash import crypto_hash
+
+GENESIS_DATA = {
+    "timestamp": 1,
+    "last_hash": "and there were nothing...",
+    "hash": "until we created light!",
+    "data": []
+}
 
 class Block ():
     def __init__ (self, timestamp, last_hash, hash, data):
@@ -18,7 +25,7 @@ class Block ():
 
     @staticmethod
     def genesis ():
-        return Block (1, "and there were nothing...", "until we created light!", [])
+        return Block (**GENESIS_DATA)
 
     def __repr__ (self):
         return (
