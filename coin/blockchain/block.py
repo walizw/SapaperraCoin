@@ -54,6 +54,28 @@ class Block ():
 
         return 1
 
+    @staticmethod
+    def is_valid_block (last_block, new_block):
+        if new_block.last_hash != last_block.hash:
+            raise Exception ("The new block last_hash must be correct.")
+
+        if hex_to_binary (new_block.hash) [0:new_block.difficulty] != "0" * new_block.difficulty:
+            raise Exception ("The proof-of-work requirement was not met.")
+
+        if abs (last_block.difficulty - new_block.difficulty) > 1:
+            raise Exception ("Difficulty should be adjusted just by one.")
+
+        reconstructed_hash = crypto_hash (
+            new_block.timestamp,
+            new_block.last_hash,
+            new_block.data,
+            new_block.nonce,
+            new_block.difficulty
+        )
+
+        if new_block.hash != reconstructed_hash:
+            raise Exception ("The new block hash must be correct.")
+
     def __repr__ (self):
         return (
             "{\n"
