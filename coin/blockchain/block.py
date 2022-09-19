@@ -76,6 +76,9 @@ class Block ():
         if new_block.hash != reconstructed_hash:
             raise Exception ("The new block hash must be correct.")
 
+    def __eq__ (self, other):
+        return self.__dict__ == other.__dict__
+        
     def __repr__ (self):
         return (
             "{\n"
