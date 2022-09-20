@@ -12,4 +12,10 @@ for i in range (3):
 def route_blockchain ():
     return jsonify (blockchain.to_json ())
 
+@app.route ("/blockchain/mine")
+def route_blockchain_mine ():
+    transaction_data = "Transaction data goes here"
+    blockchain.add_block (transaction_data)
+    return jsonify (blockchain.chain [-1].to_json ())
+
 app.run ()
