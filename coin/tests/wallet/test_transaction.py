@@ -23,4 +23,42 @@ def test_transaction ():
 
 def test_transaction_exceeds_balance ():
     with pytest.raises (Exception, match = "Amount exceeds balance"):
-        Transaction (Wallet (), "0deaduwuowonyanya", 12800)
+        Transaction (Wallet (), "0xdeaduwuowonyanya", 12800)
+
+def test_transaction_update_exceeds_balance ():
+    sender_wallet = Wallet ()
+    transaction = Transaction (sender_wallet, "0xdeaduwuowonyanya", 50)
+
+    with pytest.raises (Exception, match = "Amount exceeds balance"):
+        transaction.update (sender_wallet, "0xfoobarmitzvah", 12800)
+
+def test_transaction_update ():
+    sender_wallet = Wallet ()
+
+    first_recipient = "0xdeadfirstrecipient"
+    first_amount = 50
+
+    transaction = Transaction (sender_wallet, first_recipient, first_amount)
+
+    next_recipient = "0xdeaduwuowonyanya"
+    next_amount = 75
+    transaction.update (sender_wallet, next_recipient, next_amount)
+
+    assert transaction.output [next_recipient] == next_amount
+    assert transaction.output [sender_wallet.address] == \
+        sender_wallet.balance - first_amount - next_amount
+
+    assert Wallet.verify (transaction.input ["public_key"],
+                          transaction.output,
+                          transaction.input ["signature"])
+
+    first_amount2 = 25
+    transaction.update (sender_wallet, first_recipient, first_amount2)
+    
+    assert transaction.output [first_recipient] == first_amount + first_amount2
+    assert transaction.output [sender_wallet.address] == \
+        sender_wallet.balance - first_amount - next_amount - first_amount2
+
+    assert Wallet.verify (transaction.input ["public_key"],
+                          transaction.output,
+                          transaction.input ["signature"])
