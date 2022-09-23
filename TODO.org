@@ -1,0 +1,8 @@
+* TODO When a new block is added, don't replace the entire blockchain
+Just validate that block with the latest one in the blockchain, if it's valid
+it should be added to all the peers in the network.
+
+* TODO Store the blockchain in a sqlite3 database
+So when a peer connects to the network, it doesn't have to download the entire
+blockchain over and over, instead just get the last block it has and ask for the
+missing blocks.
