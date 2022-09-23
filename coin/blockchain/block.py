@@ -57,7 +57,7 @@ class Block ():
     @staticmethod
     def is_valid_block (last_block, new_block):
         if new_block.last_hash != last_block.hash:
-            raise Exception ("The new block last_hash must be correct.")
+            raise Exception (f"The new block last_hash must be correct. {new_block.last_hash} != {new_block.hash}")
 
         if hex_to_binary (new_block.hash) [0:new_block.difficulty] != "0" * new_block.difficulty:
             raise Exception ("The proof-of-work requirement was not met.")
@@ -78,6 +78,10 @@ class Block ():
 
     def to_json (self):
         return self.__dict__
+
+    @staticmethod
+    def from_json (block_json):
+        return Block (**block_json)
 
     def __eq__ (self, other):
         return self.__dict__ == other.__dict__
