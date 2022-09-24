@@ -62,3 +62,21 @@ def test_transaction_update ():
     assert Wallet.verify (transaction.input ["public_key"],
                           transaction.output,
                           transaction.input ["signature"])
+
+def test_valid_transaction ():
+    Transaction.is_valid_transaction (Transaction (Wallet (), "0xdeaduwuowonyanya", 50))
+
+def test_valid_transaction_invalid_outputs ():
+    sender_wallet = Wallet ()
+    transaction = Transaction (sender_wallet, "0xdeaduwuowonyanya", 50)
+    transaction.output [sender_wallet.address] = 12800
+
+    with pytest.raises (Exception, match="Invalid transaction output values"):
+        Transaction.is_valid_transaction (transaction)
+
+def test_valid_transaction_invalid_signature ():
+    transaction = Transaction (Wallet (), "0xdeaduwuowonyanya", 50)
+    transaction.input ["signature"] = Wallet ().sign (transaction.output)
+
+    with pytest.raises (Exception, match="Invalid signature"):
+        Transaction.is_valid_transaction (transaction)

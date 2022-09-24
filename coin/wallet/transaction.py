@@ -41,3 +41,17 @@ class Transaction ():
             self.output [sender_wallet.address] - amount
 
         self.input = self.create_input (sender_wallet, self.output)
+
+    @staticmethod
+    def is_valid_transaction (transaction):
+        output_total = sum (transaction.output.values ())
+
+        if transaction.input ["amount"] != output_total:
+            raise Exception ("Invalid transaction output values")
+
+        if not Wallet.verify (
+                transaction.input ["public_key"],
+                transaction.output,
+                transaction.input ["signature"]
+        ):
+            raise Exception ("Invalid signature")
