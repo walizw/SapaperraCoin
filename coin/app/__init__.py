@@ -3,12 +3,16 @@ from flask import Flask, jsonify, request
 from blockchain.blockchain import Blockchain
 from blockchain.block import Block
 
+from wallet.wallet import Wallet
+from wallet.transaction import Transaction
+
 from net.node import SapaperraNode
 
 import json
 
 app = Flask (__name__)
 blockchain = Blockchain ()
+wallet = Wallet ()
 
 node = SapaperraNode ("127.0.0.1", int (input ("Enter sapaperranode port: ")), blockchain)
 node.start ()
@@ -28,10 +32,20 @@ def route_blockchain_mine ():
     node.send_to_nodes (json.dumps (Block.to_json (blockchain.chain [-1])))
     return jsonify (blockchain.chain [-1].to_json ())
 
-@app.route ("/net/connect")
+@app.route ("/wallet/transact", methods=["POST"])
+def route_wallet_transact ():
+    transaction_data = request.get_json ()
+    transaction = Transaction (wallet, transaction_data ["recipient"],
+                               transaction_data ["amount"])
+
+    return jsonify (transaction.to_json ())
+
+
+@app.route ("/net/connect", methods=["POST"])
 def route_net_connect ():
-    ip = request.args.get ("ip")
-    port = request.args.get ("port")
+    data = request.get_json ()
+    ip = data ["ip"]
+    port = data ["port"]
 
     if ip == None or port == None:
         return "Please enter the IP and the port"
